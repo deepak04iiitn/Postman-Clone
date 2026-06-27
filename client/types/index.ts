@@ -21,7 +21,7 @@ export interface BasicAuthConfig {
   password: string;
 }
 
-export type AuthConfig = BearerAuthConfig | BasicAuthConfig | Record<string, never>;
+export type AuthConfig = BearerAuthConfig | BasicAuthConfig | Record<string, string>;
 
 // ---------------------------------------------------------------------------
 // Body
