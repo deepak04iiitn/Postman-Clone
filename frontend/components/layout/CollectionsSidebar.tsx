@@ -221,7 +221,11 @@ function RequestRow({ request, onOpen, onRename, onDelete }: RequestRowProps) {
 }
 
 // ── Main CollectionsSidebar ──────────────────────────────────
-export default function CollectionsSidebar() {
+interface SidebarProps {
+  searchQuery?: string;
+}
+
+export default function CollectionsSidebar({ searchQuery = "" }: SidebarProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [isCreating, setIsCreating] = useState(false);
   const [newColName, setNewColName] = useState("");
@@ -335,6 +339,33 @@ export default function CollectionsSidebar() {
     });
   }
 
+  // ── Filter collections + requests by search query ──────────
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = q
+    ? collections
+        .map((col) => {
+          const colMatch = col.name.toLowerCase().includes(q);
+          const matchingRequests = col.requests.filter((r) =>
+            r.name.toLowerCase().includes(q) ||
+            r.method.toLowerCase().includes(q) ||
+            r.url.toLowerCase().includes(q)
+          );
+          if (!colMatch && matchingRequests.length === 0) return null;
+          return { ...col, requests: colMatch ? col.requests : matchingRequests };
+        })
+        .filter(Boolean) as typeof collections
+    : collections;
+
+  // Auto-expand collections that have matching requests when searching
+  const expandedSet = q
+    ? new Set([
+        ...Array.from(expanded),
+        ...filtered
+          .filter((col) => col.requests.length > 0)
+          .map((col) => col.id),
+      ])
+    : expanded;
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2 p-3">
@@ -382,7 +413,7 @@ export default function CollectionsSidebar() {
         </div>
       )}
 
-      {/* Empty state */}
+      {/* Empty state — no collections at all */}
       {collections.length === 0 && !isCreating && (
         <div className="flex flex-col items-center justify-center flex-1 gap-3 px-6 text-center">
           <LayoutGrid size={36} strokeWidth={1.2} className="text-pm-border" />
@@ -399,13 +430,20 @@ export default function CollectionsSidebar() {
         </div>
       )}
 
+      {/* No search results */}
+      {collections.length > 0 && filtered.length === 0 && q && (
+        <div className="flex items-center justify-center flex-1">
+          <p className="text-pm-muted text-xs">No results for &ldquo;{searchQuery}&rdquo;</p>
+        </div>
+      )}
+
       {/* Collection tree */}
       <div className="overflow-y-auto flex-1">
-        {collections.map((col) => (
+        {filtered.map((col) => (
           <div key={col.id}>
             <CollectionRow
               collection={col}
-              isExpanded={expanded.has(col.id)}
+              isExpanded={expandedSet.has(col.id)}
               onToggle={() => toggleExpanded(col.id)}
               onRename={(name) => renameCollection(col.id, name)}
               onDelete={() => deleteCollection(col.id, col.name)}
@@ -414,7 +452,7 @@ export default function CollectionsSidebar() {
                 toast.info(`Save the request into "${col.name}"`);
               }}
             />
-            {expanded.has(col.id) && col.requests.map((req) => (
+            {expandedSet.has(col.id) && col.requests.map((req) => (
               <RequestRow
                 key={req.id}
                 request={req}

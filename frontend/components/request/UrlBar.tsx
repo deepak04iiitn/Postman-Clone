@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { ChevronDown, Loader2, Save as SaveIcon } from "lucide-react";
 import { useTabStore } from "@/store/tabStore";
 import { cn, METHOD_COLORS } from "@/lib/utils";
 import type { HttpMethod, KeyValuePair } from "@/types";
@@ -129,7 +129,7 @@ export default function UrlBar({ onSend, onSaveClick }: Props) {
         onClick={onSend}
         disabled={tab.isLoading}
         className="flex items-center gap-1.5 px-4 h-9 rounded text-sm font-medium
-                   bg-pm-orange text-white hover:bg-pm-orange-dim
+                   bg-[#0265D2] hover:bg-[#0256b5] text-white
                    disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex-shrink-0"
       >
         {tab.isLoading ? (
@@ -142,14 +142,26 @@ export default function UrlBar({ onSend, onSaveClick }: Props) {
         )}
       </button>
 
-      {/* ── Save button ───────────────────────────────────── */}
-      <button
-        onClick={onSaveClick}
-        className="px-3 h-9 rounded text-sm font-medium border border-pm-border
-                   text-pm-text hover:bg-pm-hover transition-colors flex-shrink-0"
-      >
-        Save
-      </button>
+      {/* ── Save button (split style) ──────────────────────── */}
+      <div className="flex items-stretch shrink-0 rounded border border-pm-border
+                      text-pm-text text-sm font-medium overflow-hidden
+                      hover:border-pm-muted transition-colors">
+        <button
+          onClick={onSaveClick}
+          className="flex items-center gap-1.5 px-3 h-9 hover:bg-pm-hover transition-colors"
+        >
+          <SaveIcon size={14} strokeWidth={1.8} />
+          Save
+        </button>
+        <div className="w-px bg-pm-border shrink-0" />
+        <button
+          onClick={onSaveClick}
+          className="flex items-center px-2 h-9 hover:bg-pm-hover transition-colors"
+          aria-label="Save options"
+        >
+          <ChevronDown size={12} strokeWidth={2} />
+        </button>
+      </div>
     </div>
   );
 }

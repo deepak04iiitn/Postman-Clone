@@ -74,7 +74,7 @@ export default function Sidebar() {
       {/* ── Content ──────────────────────────────────────── */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {sidebarTab === "collections" ? (
-          <CollectionsSidebar />
+          <CollectionsSidebar searchQuery={searchQuery} />
         ) : (
           <HistorySidebar searchQuery={searchQuery} />
         )}
