@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { useTabStore } from "@/store/tabStore";
 import { useAppStore } from "@/store/appStore";
 import { environmentsApi } from "@/lib/api";
@@ -36,7 +37,7 @@ export default function TopBar() {
 
   return (
     <>
-      <header className="flex items-center h-11 px-3 gap-3 bg-pm-navbar border-b border-pm-border flex-shrink-0 select-none">
+      <header className="flex items-center h-11 px-3 gap-3 bg-pm-navbar border-b border-pm-border shrink-0 select-none">
 
         {/* ── Left: logo + brand ─────────────────────────── */}
         <div className="flex items-center gap-2 min-w-0">
@@ -71,7 +72,10 @@ export default function TopBar() {
         {(["Workspaces", "Reports", "Explore"] as const).map((label) => (
           <button
             key={label}
-            title="Coming Soon"
+            onClick={() => toast.info(`${label} — Coming Soon`, {
+              description: "This feature is not yet available in this build.",
+              duration: 2500,
+            })}
             className="hidden sm:block px-2 h-7 rounded text-xs text-pm-muted
                        hover:text-pm-text hover:bg-pm-hover transition-colors"
           >
@@ -93,7 +97,7 @@ export default function TopBar() {
           >
             {/* globe / env icon */}
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-              className="flex-shrink-0 text-pm-muted" aria-hidden>
+              className="shrink-0 text-pm-muted" aria-hidden>
               <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2" />
               <path d="M6 1c-1.5 1.5-2 3-2 5s.5 3.5 2 5M6 1c1.5 1.5 2 3 2 5s-.5 3.5-2 5M1 6h10"
                 stroke="currentColor" strokeWidth="1.2" />
@@ -102,7 +106,7 @@ export default function TopBar() {
               {selectedEnv?.name ?? "No Environment"}
             </span>
             <svg width="9" height="9" viewBox="0 0 9 9" fill="none"
-              className={cn("flex-shrink-0 text-pm-muted transition-transform",
+              className={cn("shrink-0 text-pm-muted transition-transform",
                 envDropdownOpen && "rotate-180")} aria-hidden>
               <path d="M1.5 3l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
             </svg>
