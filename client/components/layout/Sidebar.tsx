@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useAppStore } from "@/store/appStore";
 import { cn } from "@/lib/utils";
 import CollectionsSidebar from "./CollectionsSidebar";
+import HistorySidebar from "./HistorySidebar";
 
 function CollectionsIcon({ active }: { active: boolean }) {
   return (
@@ -33,6 +35,13 @@ const TABS = [
 
 export default function Sidebar() {
   const { sidebarTab, setSidebarTab } = useAppStore();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Reset search when switching tabs
+  function handleTabSwitch(key: "collections" | "history") {
+    setSidebarTab(key);
+    setSearchQuery("");
+  }
 
   return (
     <div className="flex flex-col h-full bg-pm-sidebar overflow-hidden">
@@ -41,7 +50,7 @@ export default function Sidebar() {
         {TABS.map(({ key, label, Icon }) => (
           <button
             key={key}
-            onClick={() => setSidebarTab(key)}
+            onClick={() => handleTabSwitch(key)}
             className={cn(
               "flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-medium transition-colors",
               sidebarTab === key
@@ -68,11 +77,24 @@ export default function Sidebar() {
           </svg>
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={sidebarTab === "collections" ? "Search collections" : "Search history"}
             className="w-full pl-7 pr-3 h-7 rounded text-xs bg-pm-input
                        border border-pm-border text-pm-text placeholder:text-pm-muted
                        focus:outline-none focus:border-pm-orange transition-colors"
           />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-pm-muted hover:text-pm-text"
+              aria-label="Clear search"
+            >
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 
@@ -81,23 +103,9 @@ export default function Sidebar() {
         {sidebarTab === "collections" ? (
           <CollectionsSidebar />
         ) : (
-          <HistoryEmpty />
+          <HistorySidebar searchQuery={searchQuery} />
         )}
       </div>
-    </div>
-  );
-}
-
-function HistoryEmpty() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="text-pm-border" aria-hidden>
-        <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M20 10v10l6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-      <p className="text-pm-muted text-xs leading-relaxed">
-        Requests you send will appear<br />here
-      </p>
     </div>
   );
 }
