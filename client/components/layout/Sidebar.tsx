@@ -2,6 +2,7 @@
 
 import { useAppStore } from "@/store/appStore";
 import { cn } from "@/lib/utils";
+import CollectionsSidebar from "./CollectionsSidebar";
 
 function CollectionsIcon({ active }: { active: boolean }) {
   return (
@@ -76,35 +77,13 @@ export default function Sidebar() {
       </div>
 
       {/* ── Content ──────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-hidden flex flex-col">
         {sidebarTab === "collections" ? (
-          <CollectionsEmpty />
+          <CollectionsSidebar />
         ) : (
           <HistoryEmpty />
         )}
       </div>
-    </div>
-  );
-}
-
-function CollectionsEmpty() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="text-pm-border" aria-hidden>
-        <rect x="4" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <rect x="22" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <rect x="4" y="22" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <rect x="22" y="22" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-      <p className="text-pm-muted text-xs leading-relaxed">
-        Create your first collection to<br />organise your requests
-      </p>
-      <button
-        className="px-3 h-7 rounded text-xs font-medium border border-pm-border
-                   text-pm-text hover:bg-pm-hover transition-colors"
-      >
-        + New Collection
-      </button>
     </div>
   );
 }

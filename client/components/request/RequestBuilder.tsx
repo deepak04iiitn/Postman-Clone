@@ -9,9 +9,11 @@ import ParamsTab from "./ParamsTab";
 import HeadersTab from "./HeadersTab";
 import BodyTab from "./BodyTab";
 import AuthTab from "./AuthTab";
+import SaveRequestModal from "@/components/modals/SaveRequestModal";
 
 export default function RequestBuilder() {
   const [activeSubTab, setActiveSubTab] = useState<RequestSubTab>("params");
+  const [showSaveModal, setShowSaveModal] = useState(false);
 
   const tab = useTabStore((s) => s.tabs.find((t) => t.id === s.activeTabId));
 
@@ -20,17 +22,12 @@ export default function RequestBuilder() {
   const paramCount = tab?.params.filter((p) => p.enabled && p.key).length ?? 0;
   const headerCount = tab?.headers.filter((h) => h.enabled && h.key).length ?? 0;
 
-  function handleSaveClick() {
-    // Phase 5 will wire this up
-    console.log("Save clicked — wired in Phase 5");
-  }
-
   if (!tab) return null;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* URL bar */}
-      <UrlBar onSend={send} onSaveClick={handleSaveClick} />
+      <UrlBar onSend={send} onSaveClick={() => setShowSaveModal(true)} />
 
       {/* Sub-tab navigation */}
       <RequestTabs
@@ -46,9 +43,14 @@ export default function RequestBuilder() {
         {activeSubTab === "auth"        && <AuthTab />}
         {activeSubTab === "headers"     && <HeadersTab />}
         {activeSubTab === "body"        && <BodyTab />}
-        {activeSubTab === "pre-request" && <ComingSoonEditor label="Pre-request Script" />}
-        {activeSubTab === "tests"       && <ComingSoonEditor label="Tests" />}
+      {activeSubTab === "pre-request" && <ComingSoonEditor label="Pre-request Script" />}
+      {activeSubTab === "tests"       && <ComingSoonEditor label="Tests" />}
       </div>
+
+      {/* Save / Update request modal */}
+      {showSaveModal && (
+        <SaveRequestModal tab={tab} onClose={() => setShowSaveModal(false)} />
+      )}
     </div>
   );
 }
