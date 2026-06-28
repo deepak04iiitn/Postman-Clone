@@ -14,7 +14,7 @@ import type {
   RunnerResponse,
 } from "@/types";
 
-const BASE = "http://localhost:8000";
+const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 async function request<T>(
   path: string,
