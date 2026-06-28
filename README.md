@@ -140,8 +140,8 @@ On first startup the server automatically populates the database:
 |------|------|----------|
 | Collection | **JSONPlaceholder** | GET posts, GET post/1, POST post, DELETE post/1 |
 | Collection | **HTTPBin** | GET /get (with query param), POST /post, GET /status/404 |
-| Collection | **ReqRes** | GET `{{baseUrl}}/users`, POST `{{baseUrl}}/users` |
-| Environment | **ReqRes Production** | `baseUrl` = `https://reqres.in/api` |
+| Collection | **Variable Demo** | GET `{{baseUrl}}/users`, GET `{{baseUrl}}/users/1` |
+| Environment | **JSONPlaceholder Env** | `baseUrl` = `https://jsonplaceholder.typicode.com` |
 | Environment | **Local Dev** | `baseUrl` = `http://localhost:3000/api`, `authToken` = `dev-secret-token` |
 | History | 5 entries | Mix of JSONPlaceholder & HTTPBin; status codes 200, 200, 201, 404, 200; response times 89–347 ms |
 

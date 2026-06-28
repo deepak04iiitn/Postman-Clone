@@ -105,30 +105,27 @@ def run_seed() -> None:
         _req(db, hb.id, name="GET /status/404",   method="GET",
              url="https://httpbin.org/status/404")
 
-        # 3. ReqRes (uses {{baseUrl}} variable)
-        rr = Collection(id=_uuid(), name="ReqRes",
-                        description="ReqRes API using {{baseUrl}} environment variable")
+        # 3. Variable demo collection — uses {{baseUrl}} to show environment resolution
+        rr = Collection(id=_uuid(), name="Variable Demo",
+                        description="Uses {{baseUrl}} to demonstrate environment variable resolution")
         db.add(rr)
         db.flush()
 
         _req(db, rr.id, name="List users",        method="GET",
              url="{{baseUrl}}/users",
-             params=[{"key": "page", "value": "1", "enabled": True}])
-        _req(db, rr.id, name="Create user",       method="POST",
-             url="{{baseUrl}}/users",
-             body_type="raw",
-             body_content=json.dumps({"name": "morpheus", "job": "leader"}, indent=2),
-             headers=[{"key": "Content-Type", "value": "application/json", "enabled": True}])
+             params=[{"key": "_limit", "value": "5", "enabled": True}])
+        _req(db, rr.id, name="Get user by ID",    method="GET",
+             url="{{baseUrl}}/users/1")
 
         # ── Environments ──────────────────────────────────────
 
-        env_prod = Environment(id=_uuid(), name="ReqRes Production")
+        env_prod = Environment(id=_uuid(), name="JSONPlaceholder Env")
         db.add(env_prod)
         db.flush()
 
         db.add(EnvironmentVariable(
             id=_uuid(), environment_id=env_prod.id,
-            key="baseUrl", value="https://reqres.in/api", enabled=True,
+            key="baseUrl", value="https://jsonplaceholder.typicode.com", enabled=True,
         ))
 
         env_local = Environment(id=_uuid(), name="Local Dev")

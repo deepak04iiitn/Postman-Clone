@@ -7,7 +7,7 @@ from app import models, schemas
 router = APIRouter(prefix="/api/history", tags=["history"])
 
 
-@router.get("", response_model=list[schemas.HistorySummary])
+@router.get("", response_model=list[schemas.HistoryRead])
 def list_history(db: Session = Depends(get_db)):
     return (
         db.query(models.History)

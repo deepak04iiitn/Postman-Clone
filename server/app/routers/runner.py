@@ -21,14 +21,19 @@ def _build_headers(pairs: list[schemas.KeyValuePair], auth_type: str, auth_confi
         kv.key: kv.value for kv in pairs if kv.enabled and kv.key
     }
 
-    if auth_type == "bearer":
-        token = auth_config.get("token", "")
-        headers["Authorization"] = f"Bearer {token}"
-    elif auth_type == "basic":
-        username = auth_config.get("username", "")
-        password = auth_config.get("password", "")
-        encoded = base64.b64encode(f"{username}:{password}".encode()).decode()
-        headers["Authorization"] = f"Basic {encoded}"
+    # Only inject auth if the client has NOT already set an Authorization header.
+    # The client resolves {{variables}} before sending, so we trust its value.
+    already_has_auth = any(k.lower() == "authorization" for k in headers)
+    if not already_has_auth:
+        if auth_type == "bearer":
+            token = auth_config.get("token", "")
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
+        elif auth_type == "basic":
+            username = auth_config.get("username", "")
+            password = auth_config.get("password", "")
+            encoded = base64.b64encode(f"{username}:{password}".encode()).decode()
+            headers["Authorization"] = f"Basic {encoded}"
 
     return headers
 

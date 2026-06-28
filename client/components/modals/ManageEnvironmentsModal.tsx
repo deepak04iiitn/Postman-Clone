@@ -45,7 +45,9 @@ export default function ManageEnvironmentsModal({ onClose }: Props) {
   }, [environments, selectedEnvId]);
 
   // ── Fetch variables for selected env ──────────────────────
-  const { data: serverVars = [] } = useQuery({
+  // No `= []` default — a new array reference every render would cause an
+  // infinite loop in the effect below (setState → re-render → new [] → effect).
+  const { data: serverVars } = useQuery({
     queryKey: ["env-vars", selectedEnvId],
     queryFn: () => environmentsApi.getVariables(selectedEnvId!),
     enabled: !!selectedEnvId,
@@ -53,6 +55,7 @@ export default function ManageEnvironmentsModal({ onClose }: Props) {
 
   // Sync local variable state when server data changes
   useEffect(() => {
+    if (serverVars === undefined) return;
     setLocalVars(
       serverVars.map((v) => ({ key: v.key, value: v.value, enabled: v.enabled }))
     );

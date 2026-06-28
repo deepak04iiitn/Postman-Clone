@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useTabStore } from "@/store/tabStore";
 import { useAppStore } from "@/store/appStore";
 import { sendRequest, environmentsApi } from "@/lib/api";
-import { resolveRequest } from "@/lib/variableResolver";
+import { resolveRequest, resolveVariables } from "@/lib/variableResolver";
 import type { KeyValuePair, EnvironmentVariable } from "@/types";
 
 /** Build the Authorization header value from auth config, or null if none. */
@@ -59,11 +59,12 @@ export function useSendRequest() {
         variables
       );
 
-      // 4. Inject auth header (overrides any manual Authorization header)
-      const authHeader = buildAuthHeader(
-        tab.authType,
-        tab.authConfig as Record<string, string>
+      // 4. Resolve {{variables}} inside auth config values, then build the header
+      const rawAuthConfig = tab.authConfig as Record<string, string>;
+      const resolvedAuthConfig: Record<string, string> = Object.fromEntries(
+        Object.entries(rawAuthConfig).map(([k, v]) => [k, resolveVariables(v, variables)])
       );
+      const authHeader = buildAuthHeader(tab.authType, resolvedAuthConfig);
 
       const finalHeaders: KeyValuePair[] = authHeader
         ? [
@@ -84,7 +85,7 @@ export function useSendRequest() {
         body_content:
           tab.bodyType === "none" ? null : resolved.bodyContent || null,
         auth_type: tab.authType,
-        auth_config: tab.authConfig as Record<string, string>,
+        auth_config: resolvedAuthConfig,
       });
 
       // 6. Store result in tab
