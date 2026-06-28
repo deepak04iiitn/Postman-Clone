@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -17,9 +18,17 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Postman Clone API", version="1.0.0", lifespan=lifespan)
 
+# Read allowed origins from env; fall back to localhost for local dev.
+# On Render, set ALLOWED_ORIGINS=https://postman-clone-ivory.vercel.app
+_raw_origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://localhost:3001",
+)
+allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
