@@ -19,11 +19,17 @@ export const metadata: Metadata = {
 };
 
 // Injected before React hydrates to prevent a flash of wrong theme.
+// Default is light. Only apply dark if the user explicitly chose dark previously.
+// On first visit (no stored value), stays in light mode.
 const themeScript = `
 (function () {
   try {
     var t = localStorage.getItem('pm-theme');
-    if (t === 'light') document.documentElement.classList.add('light');
+    if (t === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   } catch (_) {}
 })();
 `;

@@ -20,22 +20,22 @@ A browser-based Postman clone where developers can build, send, and inspect real
 
 | Layer       | Technology                                          |
 |-------------|-----------------------------------------------------|
-| Client      | Next.js 15 · React 19 · TypeScript · Tailwind CSS  |
+| Frontend    | Next.js 15 · React 19 · TypeScript · Tailwind CSS  |
 | State       | Zustand (UI state) · TanStack React Query (server state) |
 | Notifications | Sonner (toasts)                                 |
-| Server      | Python · FastAPI · Uvicorn                          |
+| Backend     | Python · FastAPI · Uvicorn                          |
 | ORM         | SQLAlchemy 2.x                                      |
-| Database    | SQLite (file: `server/postman_clone.db`)            |
-| HTTP Proxy  | `httpx` — server sends outbound requests on behalf of the browser |
+| Database    | SQLite (file: `backend/postman_clone.db`)            |
+| HTTP Proxy  | `httpx` — backend sends outbound requests on behalf of the browser |
 
 ---
 
 ## Architecture
 
 ```
-Browser (Next.js client)
+Browser (Next.js frontend)
     │
-    ├── CRUD calls ──────────► FastAPI server ──► SQLite
+    ├── CRUD calls ──────────► FastAPI backend ──► SQLite
     │   (collections, envs,        │
     │    history, requests)         └── Auto-seeds demo data on first run
     │
@@ -51,7 +51,7 @@ Browser (Next.js client)
 
 ```
 Postman-Clone/
-├── client/                   # Next.js frontend
+├── frontend/                 # Next.js frontend
 │   ├── app/                  # Next.js App Router (layout, providers, globals)
 │   ├── components/
 │   │   ├── layout/           # TopBar, Sidebar, TabBar, MainPanel, CollectionsSidebar, HistorySidebar
@@ -64,7 +64,7 @@ Postman-Clone/
 │   ├── store/                # tabStore.ts (Zustand), appStore.ts (Zustand)
 │   └── types/                # index.ts — shared TypeScript interfaces
 │
-├── server/                   # FastAPI backend
+├── backend/                  # FastAPI backend
 │   ├── app/
 │   │   ├── main.py           # App entry point; lifespan runs init_db + seed
 │   │   ├── database.py       # SQLAlchemy engine, session, Base
@@ -93,10 +93,10 @@ Postman-Clone/
 - **Node.js** 18 or later
 - **Python** 3.11 or later
 
-### 1. Server
+### 1. Backend
 
 ```bash
-cd server
+cd backend
 
 # Create and activate a virtual environment
 python -m venv .venv
@@ -109,23 +109,23 @@ source .venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Start the server  (auto-creates DB + seeds demo data on first run)
+# Start the backend  (auto-creates DB + seeds demo data on first run)
 uvicorn app.main:app --reload
-# Server runs at http://localhost:8000
+# Backend runs at http://localhost:8000
 # Swagger UI at http://localhost:8000/docs
 ```
 
-### 2. Client
+### 2. Frontend
 
 ```bash
-cd client
+cd frontend
 
 # Install dependencies
 npm install
 
 # Start the dev server
 npm run dev
-# Client runs at http://localhost:3000
+# Frontend runs at http://localhost:3000
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -134,7 +134,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Seed Data
 
-On first startup the server automatically populates the database:
+On first startup the backend automatically populates the database:
 
 | Type | Name | Contents |
 |------|------|----------|
@@ -234,7 +234,7 @@ Complex fields (`headers`, `params`, `auth_config`, `response_headers`) are stor
 
 1. **Single user** — No authentication middleware; a single default user is assumed
 2. **Single workspace** — All data lives in one workspace
-3. **Proxy-only requests** — The client never calls external APIs directly; all requests go through `POST /runner/send`
+3. **Proxy-only requests** — The frontend never calls external APIs directly; all requests go through `POST /runner/send`
 4. **SQLite scope** — Sufficient for single-user, local-only use
 5. **File upload** — `multipart/form-data` file fields are rendered as text inputs (full file upload not implemented)
 6. **Variable resolution** — `{{variableName}}` placeholders are resolved client-side at send time using the selected environment's variables; the unresolved URL is shown in the input field

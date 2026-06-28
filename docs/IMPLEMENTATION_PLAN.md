@@ -30,7 +30,7 @@
 
 ```
 Postman-Clone/
-├── server/
+├── backend/
 │   ├── app/
 │   │   ├── main.py               # FastAPI app entry point
 │   │   ├── database.py           # SQLite connection & session
@@ -46,7 +46,7 @@ Postman-Clone/
 │   ├── requirements.txt
 │   └── .env
 │
-├── client/                       # Already scaffolded (Next.js)
+├── frontend/                     # Already scaffolded (Next.js)
 │   ├── app/                      # Next.js App Router (root, no src/ prefix)
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
@@ -72,7 +72,7 @@ Postman-Clone/
 └── README.md
 ```
 
-> **Note:** `client/` was bootstrapped with `create-next-app` and uses the App Router with the `app/` directory directly at the root of `client/` (no `src/` wrapper). All new folders (`components/`, `hooks/`, `store/`, `lib/`, `types/`) are created at the same level as `app/`.
+> **Note:** `frontend/` was bootstrapped with `create-next-app` and uses the App Router with the `app/` directory directly at the root of `frontend/` (no `src/` wrapper). All new folders (`components/`, `hooks/`, `store/`, `lib/`, `types/`) are created at the same level as `app/`.
 
 ---
 
@@ -80,7 +80,7 @@ Postman-Clone/
 
 **Goal:** Have both apps running locally with a single `README` command.
 
-> `client/` is already scaffolded. Focus of this phase is wiring up the `server/` and installing missing `client/` packages.
+> `frontend/` is already scaffolded. Focus of this phase is wiring up the `backend/` and installing missing `frontend/` packages.
 
 ### Step 0.1 — Initialise the monorepo root
 
@@ -89,8 +89,8 @@ Postman-Clone/
 
 ### Step 0.2 — Server scaffold
 
-- [ ] Create `server/app/` directory
-- [ ] Create `server/requirements.txt` with pinned versions:
+- [ ] Create `backend/app/` directory
+- [ ] Create `backend/requirements.txt` with pinned versions:
   ```
   fastapi
   uvicorn[standard]
@@ -99,24 +99,24 @@ Postman-Clone/
   python-dotenv
   pydantic
   ```
-- [ ] Create `server/.env` with `DATABASE_URL=sqlite:///./postman_clone.db`
-- [ ] Create `server/app/main.py`:
+- [ ] Create `backend/.env` with `DATABASE_URL=sqlite:///./postman_clone.db`
+- [ ] Create `backend/app/main.py`:
   - Instantiate `FastAPI` app
   - Add CORS middleware allowing `http://localhost:3000`
   - Mount all routers under `/api` prefix (runner under `/runner`)
   - Add a `GET /health` endpoint returning `{ "status": "ok" }`
-- [ ] Verify: run `uvicorn app.main:app --reload` from inside `server/` — starts without errors
+- [ ] Verify: run `uvicorn app.main:app --reload` from inside `backend/` — starts without errors
 
 ### Step 0.3 — Client: install missing packages
 
-`client/` is already created. Install the additional packages it needs:
+`frontend/` is already created. Install the additional packages it needs:
 
-- [ ] From inside `client/`, run:
+- [ ] From inside `frontend/`, run:
   ```
   npm install zustand @tanstack/react-query react-resizable-panels sonner
   ```
-- [ ] Create `client/types/index.ts` with shared TypeScript interfaces mirroring all DB models
-- [ ] Verify: `npm run dev` from `client/` serves `http://localhost:3000`
+- [ ] Create `frontend/types/index.ts` with shared TypeScript interfaces mirroring all DB models
+- [ ] Verify: `npm run dev` from `frontend/` serves `http://localhost:3000`
 
 ---
 
@@ -126,7 +126,7 @@ Postman-Clone/
 
 ### Step 1.1 — Database setup
 
-- [ ] Create `server/app/database.py`:
+- [ ] Create `backend/app/database.py`:
   - SQLAlchemy engine pointing at SQLite
   - `SessionLocal` factory
   - `Base` declarative base
@@ -134,7 +134,7 @@ Postman-Clone/
   - `init_db()` function to create all tables on startup
 - [ ] Call `init_db()` in `main.py` on the `startup` event
 
-### Step 1.2 — ORM Models (`server/app/models.py`)
+### Step 1.2 — ORM Models (`backend/app/models.py`)
 
 Define one class per table. All primary keys are UUIDs generated server-side.
 
@@ -146,7 +146,7 @@ Define one class per table. All primary keys are UUIDs generated server-side.
 
 > JSON columns: store as `Text`, serialise/deserialise in the router layer using `json.dumps` / `json.loads`.
 
-### Step 1.3 — Pydantic Schemas (`server/app/schemas.py`)
+### Step 1.3 — Pydantic Schemas (`backend/app/schemas.py`)
 
 For each model, define:
 - A `Base` schema (shared fields)
@@ -218,7 +218,7 @@ This is the core proxy endpoint.
 
 **Goal:** The three-panel Postman-like shell renders with navigation working. No real data yet.
 
-### Step 2.1 — Global layout (`client/app/layout.tsx`)
+### Step 2.1 — Global layout (`frontend/app/layout.tsx`)
 
 - [ ] Set up Tailwind base styles, dark background (`#1a1a2e` or match Postman's dark grey)
 - [ ] Wrap app with `QueryClientProvider` (React Query) and `Toaster` (Sonner)
@@ -253,7 +253,7 @@ This is the core proxy endpoint.
 - [ ] Split is a vertical `ResizablePanel` (top = request, bottom = response)
 - [ ] If no tabs open: show a "Welcome" empty state
 
-### Step 2.6 — Zustand store (`client/store/tabStore.ts` and `client/store/appStore.ts`)
+### Step 2.6 — Zustand store (`frontend/store/tabStore.ts` and `frontend/store/appStore.ts`)
 
 - [ ] `tabStore`:
   - `tabs: Tab[]` — each tab holds all request state fields
@@ -339,14 +339,14 @@ Reusable component used for Params, Headers, form-data, urlencoded.
 
 **Goal:** Clicking Send fires the request through the server proxy and shows the response.
 
-### Step 4.1 — Variable resolver (`client/lib/variableResolver.ts`)
+### Step 4.1 — Variable resolver (`frontend/lib/variableResolver.ts`)
 
 - [ ] `resolveVariables(text: string, variables: EnvVariable[]): string`
   - Replace all `{{key}}` occurrences with matching variable value
   - If no match found, leave as-is
 - [ ] Apply resolver to: URL, header values, param values, body content (raw)
 
-### Step 4.2 — API client (`client/lib/api.ts`)
+### Step 4.2 — API client (`frontend/lib/api.ts`)
 
 - [ ] Create typed `fetch` wrappers for all server endpoints
 - [ ] All requests to `http://localhost:8000`
@@ -547,7 +547,7 @@ Apply consistent colours everywhere method is displayed:
 
 **Goal:** Running the seed script populates the DB so the app is demo-ready on first launch.
 
-### Step 9.1 — Seed script (`server/app/seed.py`)
+### Step 9.1 — Seed script (`backend/app/seed.py`)
 
 Structure:
 1. Check if data already exists (skip if seeded)

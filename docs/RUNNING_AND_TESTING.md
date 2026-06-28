@@ -1,6 +1,6 @@
 # Running & Testing Guide
 
-This document covers how to start both the server and client, and how to manually test every feature of the application end-to-end.
+This document covers how to start both the backend and frontend, and how to manually test every feature of the application end-to-end.
 
 ---
 
@@ -14,11 +14,11 @@ This document covers how to start both the server and client, and how to manuall
 
 ---
 
-## 1. Running the Server (FastAPI)
+## 1. Running the Backend (FastAPI)
 
 ```bash
-# 1. Navigate to the server directory
-cd server
+# 1. Navigate to the backend directory
+cd backend
 
 # 2. Create a virtual environment
 python -m venv .venv
@@ -34,7 +34,7 @@ source .venv/bin/activate
 # 4. Install dependencies
 pip install -r requirements.txt
 
-# 5. Start the server
+# 5. Start the backend server
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -52,13 +52,13 @@ uvicorn app.main:app --reload --port 8000
 
 ---
 
-## 2. Running the Client (Next.js)
+## 2. Running the Frontend (Next.js)
 
-Open a **new terminal** (keep the server running):
+Open a **new terminal** (keep the backend running):
 
 ```bash
-# 1. Navigate to the client directory
-cd client
+# 1. Navigate to the frontend directory
+cd frontend
 
 # 2. Install dependencies (first time only)
 npm install
@@ -69,14 +69,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-> **Note:** The client is hardcoded to call `http://localhost:8000`. Both processes must be running simultaneously.
+> **Note:** The frontend is hardcoded to call `http://localhost:8000`. Both processes must be running simultaneously.
 
 ---
 
-## 3. TypeScript Type Check (Client)
+## 3. TypeScript Type Check (Frontend)
 
 ```bash
-cd client
+cd frontend
 npx tsc --noEmit
 ```
 
@@ -95,7 +95,7 @@ Work through each section in order. Each item describes the action, the expected
 | # | Action | Expected Result |
 |---|--------|----------------|
 | 1 | Open `http://localhost:3000` | Dark Postman-like layout loads with TopBar, Sidebar, empty tab area |
-| 2 | Check the Collections sidebar | Three seeded collections appear: **JSONPlaceholder**, **HTTPBin**, **ReqRes** |
+| 2 | Check the Collections sidebar | Three seeded collections appear: **JSONPlaceholder**, **HTTPBin**, **Variable Demo** |
 | 3 | Check the History tab (click clock icon) | Five pre-seeded history entries grouped under "Today" |
 
 ---
@@ -181,13 +181,13 @@ Work through each section in order. Each item describes the action, the expected
 |---|--------|----------------|
 | 37 | Click the environment dropdown in the top bar | Shows "No Environment" + seeded environments |
 | 38 | Click **Manage Environments** | ManageEnvironmentsModal opens |
-| 39 | Select **ReqRes Production** in the left panel | Variables panel shows `baseUrl = https://reqres.in/api` |
+| 39 | Select **JSONPlaceholder Env** in the left panel | Variables panel shows `baseUrl = https://jsonplaceholder.typicode.com` |
 | 40 | Add a new variable: key `userId`, value `2`; click **Save** | Toast "Environment saved"; variable persists on re-open |
 | 41 | Click **Add Environment**; name it `Staging`; click Save | New environment listed |
 | 42 | Delete `Staging` via the × icon | ConfirmDelete → environment removed |
-| 43 | Close the modal; select **ReqRes Production** from the dropdown | Environment indicator shows "ReqRes Production" |
-| 44 | Open the `List users` request from the **ReqRes** collection | Tab shows URL `{{baseUrl}}/users` |
-| 45 | Click **Send** | URL resolves to `https://reqres.in/api/users`; response is `200 OK` with user list |
+| 43 | Close the modal; select **JSONPlaceholder Env** from the dropdown | Environment indicator shows "JSONPlaceholder Env" |
+| 44 | Open the `List users` request from the **Variable Demo** collection | Tab shows URL `{{baseUrl}}/users` |
+| 45 | Click **Send** | URL resolves to `https://jsonplaceholder.typicode.com/users`; response is `200 OK` |
 | 46 | Change dropdown back to **No Environment**; click Send again | Request is sent with literal `{{baseUrl}}/users`; likely connection error or server 404 |
 
 ---
@@ -237,7 +237,7 @@ Open `http://localhost:8000/docs` and verify these work interactively:
 ### 4.12 Seed Idempotency
 
 ```bash
-# Stop the server (Ctrl+C), then restart it
+# Stop the backend (Ctrl+C), then restart it
 uvicorn app.main:app --reload --port 8000
 
 # Check collections count — should still be 3, not 6
