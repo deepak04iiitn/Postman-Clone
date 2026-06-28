@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
-/* ─── Postman colour palette ─────────────────────────────── */
+/* ─── Dark theme (default) ───────────────────────────────── */
 @theme {
-  --color-pm-bg:        #1e1e1e;
-  --color-pm-surface:   #242424;
-  --color-pm-sidebar:   #2c2c2c;
-  --color-pm-navbar:    #1a1a1a;
-  --color-pm-border:    #3a3a3a;
-  --color-pm-input:     #2d2d2d;
-  --color-pm-hover:     #373737;
-  --color-pm-active:    #3d3d3d;
-  --color-pm-text:      #e4e4e4;
-  --color-pm-muted:     #9b9b9b;
-  --color-pm-orange:    #ef5c33;
-  --color-pm-orange-dim:#c8420d;
+  --color-pm-bg:          #1e1e1e;
+  --color-pm-surface:     #242424;
+  --color-pm-sidebar:     #2c2c2c;
+  --color-pm-navbar:      #1a1a1a;
+  --color-pm-border:      #3a3a3a;
+  --color-pm-input:       #2d2d2d;
+  --color-pm-hover:       #373737;
+  --color-pm-active:      #3d3d3d;
+  --color-pm-text:        #e4e4e4;
+  --color-pm-muted:       #9b9b9b;
+  --color-pm-orange:      #ef5c33;
+  --color-pm-orange-dim:  #c8420d;
 
-  /* method badge colours */
+  /* method badge colours (same in both themes) */
   --color-method-get:     #49cc90;
   --color-method-post:    #fca130;
   --color-method-put:     #61affe;
@@ -25,6 +25,23 @@
   --color-method-options: #9daab6;
 }
 
+/* ─── Light theme overrides ──────────────────────────────── */
+/* Applied when <html class="light"> is set by the theme toggle */
+html.light {
+  --color-pm-bg:         #f3f3f3;
+  --color-pm-surface:    #ffffff;
+  --color-pm-sidebar:    #efefef;
+  --color-pm-navbar:     #ffffff;
+  --color-pm-border:     #dedede;
+  --color-pm-input:      #ffffff;
+  --color-pm-hover:      #e8e8e8;
+  --color-pm-active:     #e0e0e0;
+  --color-pm-text:       #212121;
+  --color-pm-muted:      #6b6b6b;
+  --color-pm-orange:     #ef5c33;
+  --color-pm-orange-dim: #c8420d;
+}
+
 /* ─── Resets & base ──────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -32,22 +49,26 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #1e1e1e;
-  color: #e4e4e4;
+  background-color: var(--color-pm-bg);
+  color: var(--color-pm-text);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   font-size: 13px;
   overflow: hidden;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
-/* ─── Scrollbars — slim & dark like Postman ─────────────── */
+/* ─── Scrollbars — dark theme ────────────────────────────── */
 ::-webkit-scrollbar          { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track    { background: transparent; }
 ::-webkit-scrollbar-thumb    { background: #4a4a4a; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #6a6a6a; }
 
+html.light ::-webkit-scrollbar-thumb       { background: #c0c0c0; }
+html.light ::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
+
 /* ─── Resizable panel separator ─────────────────────────── */
 [data-separator] {
-  background: #3a3a3a;
+  background: var(--color-pm-border);
   flex-shrink: 0;
   transition: background 150ms;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus, LayoutDashboard } from "lucide-react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { useTabStore } from "@/store/tabStore";
 import RequestBuilder from "@/components/request/RequestBuilder";
@@ -9,12 +10,7 @@ function NoTabsWelcome() {
   const openTab = useTabStore((s) => s.openTab);
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
-      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" className="text-pm-border" aria-hidden>
-        <rect x="4" y="4" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
-        <rect x="30" y="4" width="22" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <rect x="4" y="30" width="48" height="22" rx="3" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M30 16h22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
+      <LayoutDashboard size={52} strokeWidth={1.2} className="text-pm-border" />
       <div>
         <p className="text-pm-text font-medium text-sm mb-1">Open a request</p>
         <p className="text-pm-muted text-xs">
@@ -26,9 +22,7 @@ function NoTabsWelcome() {
         className="flex items-center gap-1.5 px-4 h-8 rounded text-xs font-medium
                    bg-pm-orange text-white hover:bg-pm-orange-dim transition-colors"
       >
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-          <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+        <Plus size={12} strokeWidth={2.2} />
         New Request
       </button>
     </div>
@@ -57,7 +51,7 @@ export default function MainPanel() {
         <RequestBuilder />
       </Panel>
 
-      <Separator className="h-px bg-pm-border hover:bg-pm-orange transition-colors cursor-row-resize flex-shrink-0" />
+      <Separator className="h-px bg-pm-border hover:bg-pm-orange transition-colors cursor-row-resize shrink-0" />
 
       <Panel id="response" minSize="20%" className="flex flex-col overflow-hidden bg-pm-bg">
         <ResponseViewer />

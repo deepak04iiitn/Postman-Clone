@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { X, Clock } from "lucide-react";
 import { historyApi } from "@/lib/api";
 import { useTabStore } from "@/store/tabStore";
 import { cn, METHOD_BG, statusColor } from "@/lib/utils";
@@ -83,14 +84,11 @@ function HistoryRow({ entry, onOpen, onDelete }: RowProps) {
       {/* Per-entry delete */}
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(entry.id); }}
-        className="opacity-0 group-hover:opacity-100 flex-shrink-0 mt-1
+        className="opacity-0 group-hover:opacity-100 shrink-0 mt-1
                    text-pm-muted hover:text-method-delete transition-all"
         aria-label="Delete history entry"
       >
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-          <path d="M1 10L5.5 5.5M10 1L5.5 5.5M5.5 5.5L1 1M5.5 5.5L10 10"
-            stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
+        <X size={11} strokeWidth={2} />
       </button>
     </div>
   );
@@ -200,11 +198,7 @@ export default function HistorySidebar({ searchQuery = "" }: Props) {
   if (history.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
-          className="text-pm-border" aria-hidden>
-          <circle cx="20" cy="20" r="16" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M20 10v10l6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+        <Clock size={40} strokeWidth={1.2} className="text-pm-border" />
         <p className="text-pm-muted text-xs leading-relaxed">
           Requests you send will appear<br />here
         </p>

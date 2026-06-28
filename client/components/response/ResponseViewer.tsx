@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SendHorizontal, AlertCircle } from "lucide-react";
 import { useTabStore } from "@/store/tabStore";
 import KeyValueTable from "@/components/shared/KeyValueTable";
 import { cn, formatBytes, statusColor } from "@/lib/utils";
@@ -63,12 +64,7 @@ function tryFormatJson(body: string | null): { formatted: string; isJson: boolea
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 text-center select-none">
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
-        className="text-pm-border" aria-hidden>
-        <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M16 24h16M24 16l8 8-8 8" stroke="currentColor"
-          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <SendHorizontal size={44} strokeWidth={1.2} className="text-pm-border" />
       <p className="text-pm-muted text-xs">
         Hit <span className="text-pm-text font-medium">Send</span> to get a response
       </p>
@@ -80,12 +76,7 @@ function EmptyState() {
 function ErrorState({ error }: { error: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
-        className="text-method-delete" aria-hidden>
-        <circle cx="20" cy="20" r="17" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M20 12v10M20 27v2" stroke="currentColor"
-          strokeWidth="2" strokeLinecap="round" />
-      </svg>
+      <AlertCircle size={40} strokeWidth={1.3} className="text-method-delete" />
       <p className="text-pm-muted text-xs max-w-sm leading-relaxed">
         <span className="text-method-delete font-medium">Request failed: </span>
         {error}

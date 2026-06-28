@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { useTabStore } from "@/store/tabStore";
 import { cn, METHOD_COLORS } from "@/lib/utils";
 import type { HttpMethod, KeyValuePair } from "@/types";
@@ -88,10 +89,7 @@ export default function UrlBar({ onSend, onSaveClick }: Props) {
           <span className={cn("text-xs font-bold", METHOD_COLORS[tab.method])}>
             {tab.method}
           </span>
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
-            className="text-pm-muted flex-shrink-0" aria-hidden>
-            <path d="M2 3.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-          </svg>
+          <ChevronDown size={10} strokeWidth={1.8} className="text-pm-muted shrink-0" />
         </button>
 
         {dropdownOpen && (
@@ -136,9 +134,7 @@ export default function UrlBar({ onSend, onSaveClick }: Props) {
       >
         {tab.isLoading ? (
           <>
-            <svg className="animate-spin" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden>
-              <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" strokeDasharray="12 6" />
-            </svg>
+            <Loader2 size={13} strokeWidth={2} className="animate-spin" />
             Sending…
           </>
         ) : (

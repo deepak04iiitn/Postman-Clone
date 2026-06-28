@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X, Plus } from "lucide-react";
 import { useTabStore } from "@/store/tabStore";
 import { cn, METHOD_COLORS } from "@/lib/utils";
 import SaveRequestModal from "@/components/modals/SaveRequestModal";
@@ -29,25 +30,19 @@ function UnsavedDialog({ tab, onSave, onDiscard, onCancel }: UnsavedDialogProps)
           </p>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <button
-            onClick={onCancel}
+          <button onClick={onCancel}
             className="px-3 h-7 rounded text-xs text-pm-muted hover:text-pm-text
-                       hover:bg-pm-hover transition-colors"
-          >
+                       hover:bg-pm-hover transition-colors">
             Cancel
           </button>
-          <button
-            onClick={onDiscard}
+          <button onClick={onDiscard}
             className="px-3 h-7 rounded text-xs border border-pm-border
-                       text-pm-text hover:bg-pm-hover transition-colors"
-          >
+                       text-pm-text hover:bg-pm-hover transition-colors">
             Discard
           </button>
-          <button
-            onClick={onSave}
+          <button onClick={onSave}
             className="px-3 h-7 rounded text-xs font-medium bg-pm-orange text-white
-                       hover:bg-pm-orange-dim transition-colors"
-          >
+                       hover:bg-pm-orange-dim transition-colors">
             Save
           </button>
         </div>
@@ -59,10 +54,7 @@ function UnsavedDialog({ tab, onSave, onDiscard, onCancel }: UnsavedDialogProps)
 // ── Main TabBar ───────────────────────────────────────────────────────────
 export default function TabBar() {
   const { tabs, activeTabId, openTab, closeTab, setActiveTab } = useTabStore();
-
-  // Tab whose × was clicked while isDirty
   const [confirmCloseTab, setConfirmCloseTab] = useState<RequestTab | null>(null);
-  // Whether to show SaveRequestModal from the dialog's "Save" button
   const [showSaveForClose, setShowSaveForClose] = useState(false);
 
   function handleClose(tab: RequestTab) {
@@ -78,14 +70,8 @@ export default function TabBar() {
     setConfirmCloseTab(null);
   }
 
-  function handleDialogSave() {
-    setShowSaveForClose(true);
-  }
-
   function handleSaveModalClose() {
-    // Called after SaveRequestModal closes (whether saved or cancelled)
     setShowSaveForClose(false);
-    // If the tab is no longer dirty (was saved), close it
     if (confirmCloseTab) {
       const latest = useTabStore.getState().tabs.find((t) => t.id === confirmCloseTab.id);
       if (!latest?.isDirty) {
@@ -98,7 +84,6 @@ export default function TabBar() {
   return (
     <>
       <div className="flex items-end h-9 bg-pm-surface border-b border-pm-border shrink-0 overflow-x-auto overflow-y-hidden">
-        {/* ── Tabs ─────────────────────────────────────────── */}
         {tabs.map((tab) => {
           const isActive = tab.id === activeTabId;
           return (
@@ -114,33 +99,21 @@ export default function TabBar() {
                   : "bg-pm-surface text-pm-muted hover:bg-pm-hover hover:text-pm-text"
               )}
             >
-              {/* orange top-border on active */}
               {isActive && (
                 <span className="absolute inset-x-0 top-0 h-[2px] bg-pm-orange rounded-b-none" />
               )}
-
-              {/* method badge */}
               <span className={cn(
                 "text-[10px] font-bold shrink-0",
                 METHOD_COLORS[tab.method as HttpMethod] ?? "text-pm-muted"
               )}>
                 {tab.method}
               </span>
-
-              {/* dirty dot */}
               {tab.isDirty && (
                 <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-pm-orange" />
               )}
-
-              {/* tab name */}
               <span className="truncate flex-1 min-w-0">{tab.name}</span>
-
-              {/* close button */}
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleClose(tab);
-                }}
+                onClick={(e) => { e.stopPropagation(); handleClose(tab); }}
                 className={cn(
                   "shrink-0 w-4 h-4 flex items-center justify-center rounded",
                   "text-pm-muted hover:text-pm-text hover:bg-pm-active transition-colors",
@@ -149,44 +122,33 @@ export default function TabBar() {
                 )}
                 aria-label="Close tab"
               >
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden>
-                  <path d="M1 1l6 6M7 1L1 7"
-                    stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                </svg>
+                <X size={8} strokeWidth={2} />
               </button>
             </div>
           );
         })}
 
-        {/* ── New tab button ────────────────────────────────── */}
         <button
           onClick={() => openTab()}
           className="flex items-center justify-center shrink-0 w-8 h-full
                      text-pm-muted hover:text-pm-text hover:bg-pm-hover transition-colors"
           aria-label="New request tab"
         >
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-            <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
+          <Plus size={11} strokeWidth={2} />
         </button>
       </div>
 
-      {/* ── Unsaved-changes dialog ────────────────────────── */}
       {confirmCloseTab && !showSaveForClose && (
         <UnsavedDialog
           tab={confirmCloseTab}
-          onSave={handleDialogSave}
+          onSave={() => setShowSaveForClose(true)}
           onDiscard={handleDialogDiscard}
           onCancel={() => setConfirmCloseTab(null)}
         />
       )}
 
-      {/* ── Save-request modal triggered from the dialog ─── */}
       {confirmCloseTab && showSaveForClose && (
-        <SaveRequestModal
-          tab={confirmCloseTab}
-          onClose={handleSaveModalClose}
-        />
+        <SaveRequestModal tab={confirmCloseTab} onClose={handleSaveModalClose} />
       )}
     </>
   );

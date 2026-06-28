@@ -3,6 +3,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {
+  ChevronRight, Folder, MoreHorizontal, Plus, LayoutGrid,
+} from "lucide-react";
 import { collectionsApi, requestsApi } from "@/lib/api";
 import { useTabStore } from "@/store/tabStore";
 import { cn, METHOD_COLORS } from "@/lib/utils";
@@ -83,23 +86,13 @@ function CollectionRow({
         className="flex items-center gap-1.5 px-2 py-1.5 cursor-pointer
                    hover:bg-pm-hover transition-colors select-none"
       >
-        {/* chevron */}
-        <svg
-          width="10" height="10" viewBox="0 0 10 10" fill="none"
-          className={cn("flex-shrink-0 text-pm-muted transition-transform", isExpanded && "rotate-90")}
-          aria-hidden
-        >
-          <path d="M3 2l4 3-4 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
+        <ChevronRight
+          size={11}
+          strokeWidth={2}
+          className={cn("shrink-0 text-pm-muted transition-transform", isExpanded && "rotate-90")}
+        />
+        <Folder size={13} strokeWidth={1.3} className="shrink-0 text-pm-muted" />
 
-        {/* folder icon */}
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
-          className="flex-shrink-0 text-pm-muted" aria-hidden>
-          <path d="M1 3.5A1.5 1.5 0 012.5 2h2.382a1.5 1.5 0 011.118.5L6.5 3H10.5A1.5 1.5 0 0112 4.5v5A1.5 1.5 0 0110.5 11h-8A1.5 1.5 0 011 9.5v-6z"
-            stroke="currentColor" strokeWidth="1.1" fill="none" />
-        </svg>
-
-        {/* name or inline editor */}
         {editing ? (
           <input
             ref={inputRef}
@@ -120,8 +113,7 @@ function CollectionRow({
           </span>
         )}
 
-        {/* ⋯ menu button */}
-        <div className="relative flex-shrink-0">
+        <div className="relative shrink-0">
           <button
             onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}
             className="opacity-0 group-hover/col:opacity-100 w-5 h-5 flex items-center
@@ -129,9 +121,7 @@ function CollectionRow({
                        transition-all"
             aria-label="Collection options"
           >
-            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor" aria-hidden>
-              <circle cx="1.5" cy="1.5" r="1.5" /><circle cx="6.5" cy="1.5" r="1.5" /><circle cx="11.5" cy="1.5" r="1.5" />
-            </svg>
+            <MoreHorizontal size={13} strokeWidth={1.8} />
           </button>
           {menuOpen && (
             <ContextMenu
@@ -180,13 +170,11 @@ function RequestRow({ request, onOpen, onRename, onDelete }: RequestRowProps) {
         className="flex items-center gap-2 pl-7 pr-2 py-1.5 cursor-pointer
                    hover:bg-pm-hover transition-colors select-none"
       >
-        {/* method badge */}
-        <span className={cn("text-[10px] font-bold flex-shrink-0 w-10",
+        <span className={cn("text-[10px] font-bold shrink-0 w-10",
           METHOD_COLORS[request.method as HttpMethod] ?? "text-pm-muted")}>
           {request.method}
         </span>
 
-        {/* name or inline editor */}
         {editing ? (
           <input
             ref={inputRef}
@@ -207,8 +195,7 @@ function RequestRow({ request, onOpen, onRename, onDelete }: RequestRowProps) {
           </span>
         )}
 
-        {/* ⋯ menu */}
-        <div className="relative flex-shrink-0">
+        <div className="relative shrink-0">
           <button
             onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}
             className="opacity-0 group-hover/req:opacity-100 w-5 h-5 flex items-center
@@ -216,9 +203,7 @@ function RequestRow({ request, onOpen, onRename, onDelete }: RequestRowProps) {
                        transition-all"
             aria-label="Request options"
           >
-            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor" aria-hidden>
-              <circle cx="1.5" cy="1.5" r="1.5" /><circle cx="6.5" cy="1.5" r="1.5" /><circle cx="11.5" cy="1.5" r="1.5" />
-            </svg>
+            <MoreHorizontal size={13} strokeWidth={1.8} />
           </button>
           {menuOpen && (
             <ContextMenu
@@ -350,7 +335,6 @@ export default function CollectionsSidebar() {
     });
   }
 
-  // ── Render ────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2 p-3">
@@ -364,7 +348,7 @@ export default function CollectionsSidebar() {
   return (
     <>
       {/* Header toolbar */}
-      <div className="flex items-center justify-between px-3 py-1.5 flex-shrink-0">
+      <div className="flex items-center justify-between px-3 py-1.5 shrink-0">
         <span className="text-[11px] text-pm-muted font-medium uppercase tracking-wide">
           Collections
         </span>
@@ -375,15 +359,13 @@ export default function CollectionsSidebar() {
                      hover:text-pm-text hover:bg-pm-hover transition-colors"
           aria-label="New Collection"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-            <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
+          <Plus size={13} strokeWidth={2} />
         </button>
       </div>
 
       {/* Inline new-collection input */}
       {isCreating && (
-        <div className="px-3 pb-1.5 flex-shrink-0">
+        <div className="px-3 pb-1.5 shrink-0">
           <input
             ref={newColRef}
             value={newColName}
@@ -403,12 +385,7 @@ export default function CollectionsSidebar() {
       {/* Empty state */}
       {collections.length === 0 && !isCreating && (
         <div className="flex flex-col items-center justify-center flex-1 gap-3 px-6 text-center">
-          <svg width="36" height="36" viewBox="0 0 40 40" fill="none" className="text-pm-border" aria-hidden>
-            <rect x="4" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-            <rect x="22" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-            <rect x="4" y="22" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-            <rect x="22" y="22" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-          </svg>
+          <LayoutGrid size={36} strokeWidth={1.2} className="text-pm-border" />
           <p className="text-pm-muted text-xs leading-relaxed">
             Create your first collection<br />to organise your requests
           </p>
@@ -433,12 +410,10 @@ export default function CollectionsSidebar() {
               onRename={(name) => renameCollection(col.id, name)}
               onDelete={() => deleteCollection(col.id, col.name)}
               onAddRequest={() => {
-                // Open a blank tab; user will Save into this collection
                 openTab();
                 toast.info(`Save the request into "${col.name}"`);
               }}
             />
-
             {expanded.has(col.id) && col.requests.map((req) => (
               <RequestRow
                 key={req.id}
@@ -452,7 +427,6 @@ export default function CollectionsSidebar() {
         ))}
       </div>
 
-      {/* Confirm-delete modal */}
       {confirmDelete && (
         <ConfirmDeleteModal
           title={confirmDelete.title}

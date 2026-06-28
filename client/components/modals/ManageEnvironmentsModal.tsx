@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { X, Plus } from "lucide-react";
 import { environmentsApi } from "@/lib/api";
 import { useAppStore } from "@/store/appStore";
 import KeyValueTable from "@/components/shared/KeyValueTable";
@@ -154,10 +155,7 @@ export default function ManageEnvironmentsModal({ onClose }: Props) {
               className="text-pm-muted hover:text-pm-text transition-colors"
               aria-label="Close"
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-                <path d="M1 1l12 12M13 1L1 13"
-                  stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              </svg>
+              <X size={14} strokeWidth={2} />
             </button>
           </div>
 
@@ -188,14 +186,11 @@ export default function ManageEnvironmentsModal({ onClose }: Props) {
                         e.stopPropagation();
                         confirmDeleteEnv(env.id, env.name);
                       }}
-                      className="opacity-0 group-hover:opacity-100 flex-shrink-0 ml-1
+                      className="opacity-0 group-hover:opacity-100 shrink-0 ml-1
                                  text-pm-muted hover:text-method-delete transition-all"
                       aria-label="Delete environment"
                     >
-                      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-                        <path d="M1 10L5.5 5.5M10 1L5.5 5.5M5.5 5.5L1 1M5.5 5.5L10 10"
-                          stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                      </svg>
+                      <X size={11} strokeWidth={2} />
                     </button>
                   </div>
                 ))}
@@ -227,9 +222,7 @@ export default function ManageEnvironmentsModal({ onClose }: Props) {
                   className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded text-xs
                              text-pm-muted hover:text-pm-text hover:bg-pm-hover transition-colors"
                 >
-                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-                    <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
+                  <Plus size={11} strokeWidth={2} />
                   Add Environment
                 </button>
               </div>

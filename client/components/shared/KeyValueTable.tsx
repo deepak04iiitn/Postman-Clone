@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { X } from "lucide-react";
 import type { KeyValuePair } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -146,14 +147,7 @@ export default function KeyValueTable({
                     className="opacity-0 group-hover:opacity-100 text-pm-muted
                                hover:text-method-delete transition-all"
                   >
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-                      <path
-                        d="M1 1l8 8M9 1L1 9"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
+                    <X size={10} strokeWidth={2} />
                   </button>
                 )}
               </td>
