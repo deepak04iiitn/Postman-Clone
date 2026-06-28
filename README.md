@@ -4,6 +4,223 @@ A browser-based Postman clone where developers can build, send, and inspect real
 
 ---
 
+## Evaluator Testing Guide
+
+> Open the deployed link — no setup needed. Follow each section below to verify all features.
+
+### What's Pre-loaded
+
+The app auto-seeds on first launch:
+- **3 collections** — JSONPlaceholder, HTTPBin, Variable Demo (left sidebar)
+- **2 environments** — JSONPlaceholder Env, Local Dev (top-right dropdown)
+- **5 history entries** — visible under the History tab immediately
+
+---
+
+### 1. Send a GET Request
+
+1. Click **New** in the top bar — a blank request tab opens
+2. Enter this URL in the URL bar:
+   ```
+   https://jsonplaceholder.typicode.com/posts/1
+   ```
+3. Click **Send**
+
+**Expected:** Response panel shows `200 OK`, response time in ms, size in KB, and a JSON body with `id`, `title`, `body`, `userId`.
+
+---
+
+### 2. Query Parameters
+
+1. With the tab from step 1 still open, click the **Params** sub-tab
+2. Add a new row: key `_limit`, value `3`
+3. Notice the URL bar instantly updates to `...posts/1?_limit=3`
+4. Click **Send**
+
+**Expected:** Response returns an array of 3 items. Unchecking the row's checkbox removes the param from the URL.
+
+---
+
+### 3. Custom Request Headers
+
+1. Click **New** → enter URL `https://httpbin.org/get`
+2. Click the **Headers** sub-tab
+3. Add a row: key `X-Evaluator`, value `hello`
+4. Click **Send**
+
+**Expected:** `200 OK`. In the JSON response body, look inside `"headers"` — you'll see `"X-Evaluator": "hello"` echoed back by httpbin.
+
+---
+
+### 4. POST Request with JSON Body
+
+1. Click **New** → change method to **POST** using the dropdown
+2. Enter URL:
+   ```
+   https://jsonplaceholder.typicode.com/posts
+   ```
+3. Click the **Body** sub-tab → select **raw** → choose **JSON** from the language dropdown
+4. Paste:
+   ```json
+   {"title": "Evaluator Test", "body": "Hello", "userId": 1}
+   ```
+5. Click **Send**
+
+**Expected:** `201 Created` with a response body showing the new resource with an auto-assigned `id: 101`.
+
+---
+
+### 5. Bearer Token Authorization
+
+1. Click **New** → enter URL `https://httpbin.org/bearer`
+2. Click the **Authorization** sub-tab
+3. Select **Bearer Token** from the auth type list on the left
+4. Enter token: `abc123`
+5. Click **Send**
+
+**Expected:** `200 OK` with response body:
+```json
+{ "authenticated": true, "token": "abc123" }
+```
+
+---
+
+### 6. Basic Auth Authorization
+
+1. Click **New** → enter URL `https://httpbin.org/basic-auth/user/pass`
+2. Click the **Authorization** sub-tab → select **Basic Auth**
+3. Enter username: `user`, password: `pass`
+4. Click **Send**
+
+**Expected:** `200 OK` with `"authenticated": true`. (Wrong credentials return `401`.)
+
+---
+
+### 7. Collections — Create, Save & Reopen
+
+1. In the left sidebar, click **+** next to the "Collections" heading
+2. Type `My Test Collection` and press **Enter** — collection appears in the sidebar
+3. Open a new request tab, enter any URL, click **Save**
+4. In the modal, enter a request name, select `My Test Collection`, click **Save**
+5. Click the collection in the sidebar to expand it — the saved request appears
+6. Click the saved request
+
+**Expected:** It reopens in a new tab with all fields (URL, method, headers, etc.) pre-filled exactly as saved.
+
+---
+
+### 8. Rename & Delete (Collections / Requests)
+
+1. Hover over a collection name — a **⋯** (three-dot) button appears
+2. Click it → context menu shows **Add Request**, **Rename**, **Delete**
+3. Click **Rename** → edit the name inline → press **Enter**
+4. Click **⋯** again → **Delete** → confirm in the modal
+
+**Expected:** Name updates immediately on rename. Collection and all its requests are removed on delete.
+
+---
+
+### 9. Environments & `{{variable}}` Resolution
+
+1. Click the top-right environment dropdown → select **JSONPlaceholder Env**
+2. In the left sidebar, expand the **Variable Demo** collection
+3. Click **List users** — the tab opens with URL `{{baseUrl}}/users`
+4. Click **Send**
+
+**Expected:** `{{baseUrl}}` resolves to `https://jsonplaceholder.typicode.com` at send time. Response is `200 OK` with a list of users.
+
+5. Switch the dropdown back to **No Environment** and Send again
+
+**Expected:** Request fails or returns an error because `{{baseUrl}}` is no longer resolved.
+
+---
+
+### 10. Manage Environments — Add a Variable
+
+1. Top-right dropdown → click **Manage Environments**
+2. Select **JSONPlaceholder Env** from the left panel
+3. In the variable table, add a new row: key `version`, value `v1`
+4. Click **Save**
+5. Close the modal and reopen it
+
+**Expected:** The `version` variable persists. You can now use `{{version}}` in any request URL or header when this environment is active.
+
+---
+
+### 11. History
+
+1. Send a few requests (any URLs)
+2. Click the **History** tab in the left sidebar
+3. All sent requests appear grouped by **Today / Yesterday / Older**
+4. Click any entry
+
+**Expected:** It reopens as a new tab with the full request restored — URL, method, headers, body, and auth all pre-filled.
+
+5. Hover over an entry → click the **×** icon that appears → confirm
+
+**Expected:** That entry is removed. Click **Clear All** to wipe the entire history.
+
+---
+
+### 12. Search
+
+1. With collections loaded, type `json` in the search bar above the sidebar
+
+**Expected:** Only collections or requests whose name/URL/method contains "json" are shown. Collections auto-expand to reveal matching requests.
+
+2. Switch to the **History** tab and type `GET` in the search bar
+
+**Expected:** History filters to only GET entries in real time.
+
+3. Click the **×** in the search bar
+
+**Expected:** Full list is restored.
+
+---
+
+### 13. Multi-Tab & Dirty State
+
+1. Click **+** three times to open three tabs
+2. In one tab, change the URL to anything different
+3. Notice a small **orange dot** appears on that tab — this means unsaved changes
+4. Click the **×** to close that tab
+
+**Expected:** A dialog appears: **"Unsaved Changes"** with three buttons — **Save**, **Discard**, **Cancel**.
+- **Cancel** → dialog closes, tab stays open
+- **Discard** → tab closes without saving
+- **Save** → Save Request modal opens to persist the request
+
+---
+
+### 14. Pretty / Raw Response Toggle
+
+1. Send `https://jsonplaceholder.typicode.com/posts/1`
+2. In the response panel, click **Raw**
+
+**Expected:** Plain unformatted JSON text.
+
+3. Click **Pretty**
+
+**Expected:** Syntax-highlighted, indented JSON with colour-coded keys, strings, numbers, and booleans.
+
+---
+
+### 15. Response Headers
+
+1. After any successful Send, in the response panel click the **Headers** tab (next to **Body**)
+
+**Expected:** A table listing all response headers (e.g. `Content-Type`, `Cache-Control`, `X-Powered-By`).
+
+---
+
+### 16. Light / Dark Mode
+
+1. Click the **sun / moon icon** in the top-right area of the top bar
+
+**Expected:** The entire UI instantly switches between light and dark themes. Refresh the page — the chosen theme is remembered via `localStorage`.
+
+---
+
 ## Features
 
 - **Request Builder** — HTTP method selector, URL bar, Params, Headers, Body (raw JSON/text, form-data, urlencoded), Authorization (Bearer, Basic Auth)
