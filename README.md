@@ -435,15 +435,66 @@ The seed is **idempotent** — safe to call on every restart; it skips if any co
 
 ## Database Schema
 
-| Table | Key Columns | Purpose |
-|-------|-------------|---------|
-| `collections` | `id`, `name`, `description` | Named groups of saved requests |
-| `requests` | `id`, `collection_id`, `method`, `url`, `headers`, `params`, `body_type`, `body_content`, `auth_type`, `auth_config` | Saved requests belonging to a collection |
-| `environments` | `id`, `name` | Named sets of variables |
-| `environment_variables` | `id`, `environment_id`, `key`, `value`, `enabled` | Key-value pairs per environment |
-| `history` | `id`, `method`, `url`, `status_code`, `response_time_ms`, `response_size_bytes`, `response_body`, `sent_at` | Auto-logged record of every sent request |
+### `collections`
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | TEXT (UUID) | Primary key |
+| `name` | TEXT | Collection name |
+| `description` | TEXT | Optional description |
+| `created_at` | DATETIME | Creation timestamp |
 
-Complex fields (`headers`, `params`, `auth_config`, `response_headers`) are stored as JSON strings in `TEXT` columns.
+### `requests`
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | TEXT (UUID) | Primary key |
+| `collection_id` | TEXT | Foreign key → `collections.id` |
+| `name` | TEXT | Request name |
+| `method` | TEXT | HTTP method (GET, POST, …) |
+| `url` | TEXT | Request URL (may contain `{{variables}}`) |
+| `headers` | TEXT (JSON) | Array of `{key, value, enabled}` objects |
+| `params` | TEXT (JSON) | Array of `{key, value, enabled}` objects |
+| `body_type` | TEXT | `none` · `raw` · `form-data` · `urlencoded` |
+| `body_content` | TEXT | Raw body string |
+| `auth_type` | TEXT | `none` · `bearer` · `basic` |
+| `auth_config` | TEXT (JSON) | Auth fields (e.g. `{token}` or `{username, password}`) |
+| `created_at` | DATETIME | Creation timestamp |
+
+### `environments`
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | TEXT (UUID) | Primary key |
+| `name` | TEXT | Environment name |
+| `created_at` | DATETIME | Creation timestamp |
+
+### `environment_variables`
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | TEXT (UUID) | Primary key |
+| `environment_id` | TEXT | Foreign key → `environments.id` |
+| `key` | TEXT | Variable name (used in `{{key}}` placeholders) |
+| `value` | TEXT | Variable value |
+| `enabled` | BOOLEAN | Whether the variable is active |
+
+### `history`
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | TEXT (UUID) | Primary key |
+| `method` | TEXT | HTTP method used |
+| `url` | TEXT | Resolved URL that was sent |
+| `headers` | TEXT (JSON) | Request headers sent |
+| `params` | TEXT (JSON) | Query params sent |
+| `body_type` | TEXT | Body type used |
+| `body_content` | TEXT | Body content sent |
+| `auth_type` | TEXT | Auth type used |
+| `auth_config` | TEXT (JSON) | Auth config used |
+| `status_code` | INTEGER | HTTP response status (null on network error) |
+| `response_time_ms` | INTEGER | Round-trip time in milliseconds |
+| `response_size_bytes` | INTEGER | Response body size in bytes |
+| `response_headers` | TEXT (JSON) | Response headers received |
+| `response_body` | TEXT | Response body (truncated if very large) |
+| `sent_at` | DATETIME | Timestamp when the request was sent |
+
+> All JSON fields are stored as serialised strings in `TEXT` columns and parsed by the API layer before returning to the client.
 
 ---
 
