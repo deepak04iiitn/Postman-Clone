@@ -5,11 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db
 from app.routers import collections, environments, history, requests, runner
+from app import seed
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    seed.run_seed()
     yield
 
 
