@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTabStore } from "@/store/tabStore";
+import { useSendRequest } from "@/hooks/useSendRequest";
 import UrlBar from "./UrlBar";
 import RequestTabs, { type RequestSubTab } from "./RequestTabs";
 import ParamsTab from "./ParamsTab";
@@ -14,13 +15,10 @@ export default function RequestBuilder() {
 
   const tab = useTabStore((s) => s.tabs.find((t) => t.id === s.activeTabId));
 
+  const { send } = useSendRequest();
+
   const paramCount = tab?.params.filter((p) => p.enabled && p.key).length ?? 0;
   const headerCount = tab?.headers.filter((h) => h.enabled && h.key).length ?? 0;
-
-  function handleSend() {
-    // Phase 4 will wire this up
-    console.log("Send clicked — wired in Phase 4");
-  }
 
   function handleSaveClick() {
     // Phase 5 will wire this up
@@ -32,7 +30,7 @@ export default function RequestBuilder() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* URL bar */}
-      <UrlBar onSend={handleSend} onSaveClick={handleSaveClick} />
+      <UrlBar onSend={send} onSaveClick={handleSaveClick} />
 
       {/* Sub-tab navigation */}
       <RequestTabs
